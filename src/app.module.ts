@@ -9,11 +9,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CatsModule } from './modules/cats/cats.module';
 import { LoggerMiddleware } from './middlewares/logger.middleware';
+import { APP_FILTER, APP_PIPE } from '@nestjs/core';
+import { HttpExceptionFilter } from './exceptions/http-exception.filter';
+import { ValidationPipe } from './pipes/validation.pipe';
 
 @Module({
   imports: [CatsModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    { provide: APP_FILTER, useClass: HttpExceptionFilter },
+    { provide: APP_PIPE, useClass: ValidationPipe },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
